@@ -301,6 +301,16 @@ class Knight(_Piece):
 			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
 				possibleMoves.append(newPos)
 
+		# Up right
+		newPos = (self._pos[0] + 1, self._pos[1] + 2)
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
+				possibleMoves.append(newPos)
+
 		return possibleMoves
 
 
