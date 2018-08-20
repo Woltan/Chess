@@ -86,12 +86,12 @@ class Board(object):
 				if (a + b) % 2 == 0:
 					if not piece : print ('|        ', end = '')
 					elif piece.Color == "white":print (piece.AbbreviationLong, end = '')
-					else:print (piece.AbbreviationLong.lower, end = '')
+					else:print (piece.AbbreviationLong.lower(), end = '')
 
 				else :
 					if not piece: print('|  ----  ', end='')
 					elif piece.Color == "white": print (piece.AbbreviationLongColored, end = '')
-					else:	print (piece.AbbreviationLongColored.lower, end = '')
+					else:	print (piece.AbbreviationLongColored.lower(), end = '')
 
 
 			print('|')

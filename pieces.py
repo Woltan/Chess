@@ -116,6 +116,7 @@ class Rook(_Piece):
 
 		return possibleMoves
 
+
 class Bishop(_Piece):
 	Abbreviation = "B"
 	AbbreviationLong = "|  BSHP  "
@@ -190,6 +191,7 @@ class Bishop(_Piece):
 
 		return possibleMoves
 
+
 class King(_Piece):
 	Abbreviation = "K"
 	AbbreviationLong = "|  KING  "
@@ -199,13 +201,13 @@ class King(_Piece):
 		possibleMoves = list()
 
 		# Up left
-		newPos = (self._pos[0]-1, self._pos[1]+1)
+		newPos = (self._pos[0] - 1, self._pos[1] + 1)
 		piece = board.GetPiece(newPos)
 		if piece:
 			if piece.Color != self._color:
 				possibleMoves.append(newPos)
 		else:
-			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1]< 8 :
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1]< 8:
 				possibleMoves.append(newPos)
 
 		# Up right
