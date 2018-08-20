@@ -4,6 +4,7 @@ class _Piece(object):
 	Pos = property(lambda self: self._pos)
 	HumanPos = property(lambda self: "abcdefgh"[self._pos[0]] + str(self._pos[1] + 1))
 	Color = property(lambda self: self._color)
+	Moved = property(lambda self: self._moved)
 
 	def __init__(self, pos, color):
 		self._pos = pos

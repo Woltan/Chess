@@ -9,15 +9,19 @@ class Board(object):
 	def __init__(self, pieces, turn):
 		self._pieces = pieces
 		self._turn = turn
+		self._lastMove = None
 
 	@classmethod
-	def CreateNewBoard(cls):
-		pieces = [Pawn((i, 1), "white") for i in range(8)] + [Pawn((i, 6), "black") for i in range(8)]
-		pieces.extend([Rook((0, 0), "white"), Rook((7, 0), "white"), Rook((0, 7), "black"), Rook((7, 7), "black")])
-		pieces.extend([Knight((1, 0), "white"), Knight((6, 0), "white"), Knight((1, 7), "black"), Knight((6, 7), "black")])
-		pieces.extend([Bishop((2, 0), "white"), Bishop((5, 0), "white"), Bishop((2, 7), "black"), Bishop((5, 7), "black")])
-		pieces.extend([King((4, 0), "white"), King((4, 7), "black")])
-		pieces.extend([Queen((3, 0), "white"), Queen((3, 7), "black")])
+	def CreateNewBoard(cls, fen=None):
+		if fen:
+			raise NotImplementedError()
+		else:
+			pieces = [Pawn((i, 1), "white") for i in range(8)] + [Pawn((i, 6), "black") for i in range(8)]
+			pieces.extend([Rook((0, 0), "white"), Rook((7, 0), "white"), Rook((0, 7), "black"), Rook((7, 7), "black")])
+			pieces.extend([Knight((1, 0), "white"), Knight((6, 0), "white"), Knight((1, 7), "black"), Knight((6, 7), "black")])
+			pieces.extend([Bishop((2, 0), "white"), Bishop((5, 0), "white"), Bishop((2, 7), "black"), Bishop((5, 7), "black")])
+			pieces.extend([King((4, 0), "white"), King((4, 7), "black")])
+			pieces.extend([Queen((3, 0), "white"), Queen((3, 7), "black")])
 
 		return cls(pieces, "white")
 
@@ -45,16 +49,66 @@ class Board(object):
 		else:
 			return None
 
-	def GetPieces(self, colors=None, positions=None):
-		pieces = self._pieces
+	def GetPieces(self, colors=None, positions=None, pieces=None):
+		filteredPieces = self._pieces
 
 		if colors is not None:
-			pieces = [p for p in pieces if p.Color in colors]
+			filteredPieces = [p for p in filteredPieces if p.Color in colors]
 
 		if positions is not None:
-			pieces = [p for p in pieces if p.Pos in positions]
+			filteredPieces = [p for p in filteredPieces if p.Pos in positions]
 
-		return pieces
+		if pieces is not None:
+			filteredPieces = [p for p in filteredPieces if p.__class__ in pieces]
+
+		return filteredPieces
+
+	def ExportFEN(self):
+		fen = ""
+		for i in range(7, -1, -1):
+			z = 0
+			for j in range(8):
+				piece = self.GetPiece((j, i))
+				if piece:
+					if z != 0:
+						fen += str(z)
+
+					fen += piece.Abbreviation if piece.Color == "white" else piece.Abbreviation.lower()
+					z = 0
+				else:
+					z += 1
+
+			else:
+				if z != 0:
+					fen += str(z)
+
+				if i > 0:
+					fen += "/"
+
+		fen += " {} ".format(self._turn[0])
+
+		# if self.GetPieces(["white"], pieces=["King"])[0].Moved:
+		# 	fen += "-"
+		# else:
+		# 	rook = self.GetPieces(["white"], (0, 0), ["Rook"])
+		# 	if rook and rook[0].Moved:
+		# 		fen += "-"
+		# 	else:
+		# 		fen += "Q"
+		#
+		# 	rook = self.GetPieces(["white"], (7, 0), ["Rook"])
+		# 	if rook and rook[0].Moved:
+		# 		fen += "-"
+		# 	else:
+		# 		fen += "K"
+		#
+		#
+		# if self.GetPieces(["black"], pieces=["King"])[0].Moved:
+		# 	fen += "-"
+		# else:
+		# 	pass
+
+		return fen
 
 	def Print(self):
 		board = "_" * 8 + "\n"

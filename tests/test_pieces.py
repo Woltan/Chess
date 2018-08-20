@@ -1,7 +1,7 @@
 import unittest
 
 from board import Board
-from pieces import Pawn, Knight
+from pieces import Pawn
 
 
 class TestPawn(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestRook(unittest.TestCase):
 
 	def testGetPossibleMoves(self):
 		rook = self._board.GetPiece((7, 0))
-		print(rook.GetPossibleMoves(self._board, None))
+		self.assertListEqual(rook.GetPossibleMoves(self._board, None), [])
 
 
 class TestKnight(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestKnight(unittest.TestCase):
 
 	def testGetPossibleMoves(self):
 		knight = self._board.GetPiece((1, 7))
-		self.assertListEqual(knight.GetPossibleMoves(self._board, None),[(0, 5), (2, 5)])
+		self.assertListEqual(knight.GetPossibleMoves(self._board, None), [(0, 5), (2, 5)])
 
 
 if __name__ == '__main__':
