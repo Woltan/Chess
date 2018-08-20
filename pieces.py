@@ -22,6 +22,8 @@ class _Piece(object):
 
 class Pawn(_Piece):
 	Abbreviation = "P"
+	AbbreviationLong = "|  PAWN  "
+	AbbreviationLongColored = "|--PAWN--"
 
 	def GetPossibleMoves(self, board, prevMove):
 		# TODO: Implement En-Passant
@@ -54,6 +56,8 @@ class Pawn(_Piece):
 
 class Rook(_Piece):
 	Abbreviation = "R"
+	AbbreviationLong = "|  ROOK  "
+	AbbreviationLongColored = "|--ROOK--"
 
 	def GetPossibleMoves(self, board, prevMove):
 		possibleMoves = list()
@@ -100,6 +104,320 @@ class Rook(_Piece):
 		# Bottom
 		for i in range(self._pos[1] - 1, -1, -1):
 			newPos = (self._pos[0], i)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		return possibleMoves
+
+class Bishop(_Piece):
+	Abbreviation = "B"
+	AbbreviationLong = "|  BSHP  "
+	AbbreviationLongColored = "|--BSHP--"
+
+	def GetPossibleMoves(self, board, prevMove):
+		possibleMoves = list()
+
+		# Up right
+		j = self._pos[1]
+		for i in range(self._pos[0] + 1, 8):
+			j = j + 1
+			if j > 7: break
+			newPos = (i, j)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Up Left
+		j = self._pos[1]
+		for i in range(self._pos[0] - 1, -1):
+			j = j + 1
+			if j > 7: break
+			newPos = (i, j)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Down Right
+		j = self._pos[1]
+		for i in range(self._pos[0] + 1, 8):
+			j = j - 1
+			if j < 0: break
+			newPos = (i,j)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Down Left
+		j = self._pos[1]
+		for i in range(self._pos[0] - 1, -1, -1):
+			j = j - 1
+			if j < 0: break
+			newPos = (i , j)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		return possibleMoves
+
+class King(_Piece):
+	Abbreviation = "K"
+	AbbreviationLong = "|  KING  "
+	AbbreviationLongColored = "|--KING--"
+
+	def GetPossibleMoves(self, board, prevMove):
+		possibleMoves = list()
+
+		# Up left
+		newPos = (self._pos[0]-1, self._pos[1]+1)
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1]< 8 :
+				possibleMoves.append(newPos)
+
+		# Up right
+		newPos = (self._pos[0] + 1, self._pos[1] + 1)
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
+				possibleMoves.append(newPos)
+
+		# Down left
+		newPos = (self._pos[0] - 1, self._pos[1] - 1)
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
+				possibleMoves.append(newPos)
+
+		# Down right
+		newPos = (self._pos[0] + 1, self._pos[1] - 1)
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
+				possibleMoves.append(newPos)
+
+		# Left
+		newPos = (self._pos[0]-1, self._pos[1])
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1]< 8 :
+				possibleMoves.append(newPos)
+
+		# Down
+		newPos = (self._pos[0], self._pos[1] - 1)
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
+				possibleMoves.append(newPos)
+
+		# Up
+		newPos = (self._pos[0], self._pos[1] + 1)
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
+				possibleMoves.append(newPos)
+
+		# Right
+		newPos = (self._pos[0] + 1, self._pos[1])
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
+				possibleMoves.append(newPos)
+
+		return possibleMoves
+
+
+class Knight(_Piece):
+	Abbreviation = "N"
+	AbbreviationLong = "|  KNGT  "
+	AbbreviationLongColored = "|--KNGT--"
+
+	def GetPossibleMoves(self, board, prevMove):
+		possibleMoves = list()
+
+		# Up left
+		newPos = (self._pos[0] - 1, self._pos[1] + 2)
+		piece = board.GetPiece(newPos)
+		if piece:
+			if piece.Color != self._color:
+				possibleMoves.append(newPos)
+		else:
+			if newPos[0] > -1 and newPos[0] < 8 and newPos[1] > -1 and newPos[1] < 8:
+				possibleMoves.append(newPos)
+
+		return possibleMoves
+
+
+class Queen(_Piece):
+	Abbreviation = "Q"
+	AbbreviationLong = "|  QUEN  "
+	AbbreviationLongColored = "|--QUEN--"
+
+	def GetPossibleMoves(self, board, prevMove):
+		possibleMoves = list()
+
+		# Move options like a rook
+		# Right
+		for i in range(self._pos[0] + 1, 8):
+			newPos = (i, self._pos[1])
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Left
+		for i in range(self._pos[0] - 1, -1, -1):
+			newPos = (i, self._pos[1])
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Top
+		for i in range(self._pos[1] + 1, 8):
+			newPos = (self._pos[0], i)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Bottom
+		for i in range(self._pos[1] - 1, -1, -1):
+			newPos = (self._pos[0], i)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Move options like a bishop
+		# Up right
+		j = self._pos[1]
+		for i in range(self._pos[0] + 1, 8):
+			j = j + 1
+			if j > 7: break
+			newPos = (i, j)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Up Left
+		j = self._pos[1]
+		for i in range(self._pos[0] - 1, -1):
+			j = j + 1
+			if j > 7: break
+			newPos = (i, j)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Down Right
+		j = self._pos[1]
+		for i in range(self._pos[0] + 1, 8):
+			j = j - 1
+			if j < 0: break
+			newPos = (i, j)
+			piece = board.GetPiece(newPos)
+			if piece:
+				if piece.Color != self._color:
+					possibleMoves.append(newPos)
+					break
+				else:
+					break
+			else:
+				possibleMoves.append(newPos)
+
+		# Down Left
+		j = self._pos[1]
+		for i in range(self._pos[0] - 1, -1, -1):
+			j = j - 1
+			if j < 0: break
+			newPos = (i, j)
 			piece = board.GetPiece(newPos)
 			if piece:
 				if piece.Color != self._color:
