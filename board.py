@@ -10,6 +10,8 @@ class Board(object):
 		self._pieces = pieces
 		self._turn = turn
 		self._lastMove = None
+		self._moveNumber = 0
+		self._moves = list()
 
 	@classmethod
 	def CreateNewBoard(cls, fen=None):
@@ -25,22 +27,40 @@ class Board(object):
 
 		return cls(pieces, "white")
 
-	def Move(self):
-		possibleMoves = [(piece, newPos) for piece in self._pieces if piece.Color == self._turn for newPos in piece.GetPossibleMoves(self, None)]
+	def Move(self, move=None):
+		if move is None:
+			possibleMoves = [(piece, newPos) for piece in self._pieces if piece.Color == self._turn for newPos in piece.GetPossibleMoves(self, None)]
 
-		piece, newPos = random.choice(possibleMoves)
+			piece, newPos = random.choice(possibleMoves)
 
-		removePiece = self.GetPiece(newPos)
-		if removePiece:
-			self._pieces.remove(removePiece)
+			removePiece = self.GetPiece(newPos)
+			if removePiece:
+				self._pieces.remove(removePiece)
 
-		prevPos = piece.HumanPos
+			prevPos = piece.HumanPos
 
-		piece.Move(newPos)
+			piece.Move(newPos)
+		else:
+			prevPos, newPos = move
+			piece = self.GetPiece(prevPos)
+			if not piece:
+				raise Exception("Cannot find piece on field '{}'.".format(prevPos))
+
+			removePiece = self.GetPiece(newPos)
+			if removePiece:
+				self._pieces.remove(removePiece)
+
+			piece.Move(newPos)
+
+		self._moves.append((piece, prevPos, newPos, bool(removePiece)))
 
 		print("{}: {} -> {} (Pieces: {}, {})".format(piece.Abbreviation, prevPos, piece.HumanPos, len(self.GetPieces("white")), len(self.GetPieces("black"))))
 
-		self._turn = "white" if self._turn == "black" else "black"
+		if self._turn == "white":
+			self._moveNumber += 1
+			self._turn = "black"
+		else:
+			self._turn = "white"
 
 	def GetPiece(self, position):
 		for piece in self._pieces:
@@ -87,28 +107,67 @@ class Board(object):
 
 		fen += " {} ".format(self._turn[0])
 
-		# if self.GetPieces(["white"], pieces=["King"])[0].Moved:
-		# 	fen += "-"
-		# else:
-		# 	rook = self.GetPieces(["white"], (0, 0), ["Rook"])
-		# 	if rook and rook[0].Moved:
-		# 		fen += "-"
-		# 	else:
-		# 		fen += "Q"
-		#
-		# 	rook = self.GetPieces(["white"], (7, 0), ["Rook"])
-		# 	if rook and rook[0].Moved:
-		# 		fen += "-"
-		# 	else:
-		# 		fen += "K"
-		#
-		#
-		# if self.GetPieces(["black"], pieces=["King"])[0].Moved:
-		# 	fen += "-"
-		# else:
-		# 	pass
+		# Castling
+		whiteCastlings = self._CheckCastling("white")
+		blackCastlings = self._CheckCastling("black")
+
+		if not whiteCastlings and not blackCastlings:
+			fen += "- "
+		else:
+			if whiteCastlings is not None:
+				fen += whiteCastlings
+			if blackCastlings is not None:
+				fen += blackCastlings
+
+			fen += " "
+
+		# Last pawn move
+		if not self._moves:
+			fen += "-" + " "
+		else:
+			piece, prevPos, newPos, _ = self._moves[-1]
+			if not issubclass(type(piece), Pawn):
+				fen += "-" + " "
+			else:
+				if prevPos[1] < newPos[1]:
+					if prevPos[1] == 1 and newPos[1] == 3:
+						fen += "abcdefgh"[prevPos[0]] + str(3) + " "
+					else:
+						fen += "- "
+				elif newPos[1] < prevPos[1]:
+					if prevPos[1] == 6 and newPos[1] == 4:
+						fen += "abcdefgh"[prevPos[0]] + str(6) + " "
+					else:
+						fen += "- "
+				else:
+					fen += "- "
+
+		for i, move in enumerate(self._moves[::-1]):
+			piece, _, _, removed = move
+			if issubclass(type(piece), Pawn) or removed:
+				break
+
+		fen += str(i) + " " + str(max(self._moveNumber, 1))
 
 		return fen
+
+	def _CheckCastling(self, color):
+		if self.GetPieces([color], pieces=[King])[0].Moved:
+			return None
+
+		castles = ["", ""]
+		for rook in self.GetPieces([color], pieces=[Rook]):
+			if rook.Moved:
+				continue
+			else:
+				if rook.Pos[0] == 7:
+					castles[0] = "K" if color == "white" else "k"
+				elif rook.Pos[0] == 0:
+					castles[1] = "Q" if color == "white" else "q"
+
+		castles = "".join(castles).strip()
+
+		return castles
 
 	def Print(self):
 		board = "_" * 8 + "\n"
@@ -134,7 +193,7 @@ class Board(object):
 				print('   |        |  ----  |        |  ----  |        |  ----  |        |  ----  |')
 			else :
 				print('   |  ----  |        |  ----  |        |  ----  |        |  ----  |        |')
-			print( a, ' ', end = '')
+			print( a+1, ' ', end = '')
 			for b in range (8):
 				piece = self.GetPiece((b, a))
 				if (a + b) % 2 == 0:

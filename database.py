@@ -67,7 +67,7 @@ cur.execute('''INSERT OR IGNORE INTO
     Position (fen, RightToMove_id, CastlingAbility_id,EnPassantAbility_id, bestOrigin, bestDestination, promotion  )
     VALUES ( 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', 1, 2, 1, 'e2', 'e4', '-' )''')
 
-#Read values from database
+# Read values from database
 
 cur.execute('''SELECT bestOrigin, bestDestination 
     FROM Position WHERE fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR' 
